@@ -19,7 +19,7 @@ class Orders extends MY_Model {
             $record = $CI->orderitems->get($num, $code);
             $record->quantity++;
             $CI->orderitems->update($record);
-        } else {
+            } else {
           $record = $CI->orderitems->create();
           $record->order = $num;
           $record->item = $code;
@@ -49,7 +49,11 @@ class Orders extends MY_Model {
 
     // cancel an order
     function flush($num) {
-        
+        $CI = &get_instance();
+        $CI->orderitems->delete_some($num);
+        $record = $CI->orders->get($num);
+        $record->status = 'x';
+        $CI->orders->update($record);
     }
 
     // validate an order

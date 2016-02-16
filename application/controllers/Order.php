@@ -105,12 +105,28 @@ class Order extends Application {
     // proceed with checkout
     function commit($order_num) {
         //FIXME
+        if (!$this->orders->validate($order_num))
+            redirect('/order/display_menu/' . $order_num);
+        $record = $this->orders->get($order_num);
+        $record->date = date(DATE_ATOM);
+        $record->status = 'c';
+        $record->total = $this->orders->total($order_num);
+        $this->orders->update($record);
+        
         redirect('/');
     }
 
     // cancel the order
     function cancel($order_num) {
-        //FIXME
+        /* // using new orders::flush() method instead
+        $this->orderitems->delete_some($order_num);
+        $record = $this->orders->get($order_num);
+        $reocrd->status = 'x';
+        $this->orders->update($record);
+         * 
+         */
+        $this->orders->flush($order_num);
+                
         redirect('/');
     }
 
